@@ -18,12 +18,15 @@ type
     sCmBoxExSelDisk: TsComboBoxEx;
     LblSelectDisk: TsLabel;
     ImageListDrive: TImageList;
-    sLblAdmissibleSpace: TsLabel;
     sGrBox: TsGroupBox;
     sSpEdLow: TsSpinEdit;
     sLblLow: TsLabel;
     sLblHigh: TsLabel;
     sSpEdHigh: TsSpinEdit;
+    sBtnUdateDriveList: TsButton;
+    ImageListBtn: TImageList;
+    sLblGb1: TsLabel;
+    sLblGb2: TsLabel;
     procedure sBtnCalculateClick(Sender: TObject);
     procedure ScanDrive;
     function AddAssociatedIcon(FileName: String; ImageList: TImageList): Integer;
@@ -31,6 +34,7 @@ type
     procedure sCmBoxExSelDiskSelect(Sender: TObject);
     procedure sSpEdLowChange(Sender: TObject);
     procedure sSpEdHighChange(Sender: TObject);
+    procedure sBtnUdateDriveListClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -141,6 +145,13 @@ begin
   end;
   mm.Lines.Add('');
   mm.Lines.Add('Найден самый оптимальный вариант: ' + LastDescription);
+end;
+
+procedure TFrmMain.sBtnUdateDriveListClick(Sender: TObject);
+begin
+  ScanDrive;
+  sCmBoxExSelDisk.Text := '';
+  sCmBoxExSelDisk.SetFocus;
 end;
 
 procedure TFrmMain.ScanDrive;

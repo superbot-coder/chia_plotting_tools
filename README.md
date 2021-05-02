@@ -9,9 +9,9 @@ The calculator helps to optimally calculate the number of rafts, which would tak
 
  ---
 # Требования для компиляции:
-- RAD Studio Delphi 10.3.1 и выше.
+- RAD Studio Delphi 10.3 Rio и выше.
 - Установленый пакет AlphaSkins v14.36 https://www.alphaskins.com 
 
 # Requirements for compilation:
-- RAD Studio Delphi 10.3.1
+- RAD Studio Delphi 10.3 Rio
 - Installed Package AlphaSkins v14.36 https://www.alphaskins.com
