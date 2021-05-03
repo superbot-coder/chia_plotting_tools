@@ -45,7 +45,7 @@ type TPlotsType = (K32, K33, K34);
 
 var
   FrmMain: TFrmMain;
-  aPlots: Array[TPlotsType] of real = (101.4, 208.8, 429.8);
+  aPlots: Array[TPlotsType] of real = (108.9, 224.2, 461.5);
   аPlotsStr: Array[TPlotsType] of String = ('K32','K33','K34');
   aPlotsMaxCount: Array[TPlotsType] of DWORD;
   SELECT_DISK_FREE_SZ: UInt64;
@@ -124,14 +124,14 @@ begin
         if (sum < SpEdDiskSpace.Value) then
         begin
           Rem := SpEdDiskSpace.Value - sum;
-          // Что бы показать и другие приближенные значения к миниму. 1/4 от минимального плота
+          // Что бы показать и другие приближенные значения к миниму, задается диапазоном значений
           if (Rem < sSpEdHigh.Value) and (Rem > sSpEdLow.Value) then
           begin
             DescriptStr := аPlotsStr[K34] + 'x' + IntToStr(N34) +
                            ' + ' + аPlotsStr[K33] + 'x' + IntToStr(N33) +
                            ' + ' + аPlotsStr[K32] + 'x' + IntToStr(N32);
             DescriptStr := DescriptStr + ' = ' + FloatToStrF(sum, ffFixed, 8, 2) +
-                           'Gb free Size = ' + FloatToStrF(rem, ffFixed, 8,2) + 'Gb';
+                           'Gb free Size = ' + FloatToStrF(rem, ffFixed, 8, 2) + 'Gb';
             mm.Lines.Add(DescriptStr);
             if Rem < SmallRem then
             begin
