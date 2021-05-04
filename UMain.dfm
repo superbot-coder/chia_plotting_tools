@@ -6872,8 +6872,8 @@ object FrmMain: TFrmMain
     BoundLabel.Font.Charset = RUSSIAN_CHARSET
     BoundLabel.Font.Color = clBlack
     BoundLabel.Font.Height = -13
-    BoundLabel.Font.Name = 'Courier'
-    BoundLabel.Font.Style = []
+    BoundLabel.Font.Name = 'Courier New'
+    BoundLabel.Font.Style = [fsBold]
   end
   object sBtnCalculate: TsButton
     Left = 480
@@ -6892,7 +6892,7 @@ object FrmMain: TFrmMain
     MaxValue = 0
     MinValue = 0
     TabOrder = 2
-    Value = 0
+    Value = 1863
   end
   object sCmBoxExSelDisk: TsComboBoxEx
     Left = 131
@@ -6952,7 +6952,7 @@ object FrmMain: TFrmMain
       OnChange = sSpEdLowChange
       BoundLabel.ParentFont = False
       MaxValue = 7
-      MinValue = 1
+      MinValue = 0
       Value = 1
     end
     object sSpEdHigh: TsSpinEdit
@@ -6964,7 +6964,7 @@ object FrmMain: TFrmMain
       Text = '5'
       OnChange = sSpEdHighChange
       BoundLabel.ParentFont = False
-      MaxValue = 109
+      MaxValue = 110
       MinValue = 2
       Value = 5
     end

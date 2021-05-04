@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, sButton, sMemo,
   sSkinManager, sLabel, sEdit, Vcl.ComCtrls, sComboBoxes, Vcl.Samples.Spin,
-  Winapi.ShellApi, System.ImageList, Vcl.ImgList, sSpinEdit, sGroupBox;
+  Winapi.ShellApi, System.ImageList, Vcl.ImgList, sSpinEdit, sGroupBox, GetVer;
 
 type
   TFrmMain = class(TForm)
@@ -45,10 +45,11 @@ type TPlotsType = (K32, K33, K34);
 
 var
   FrmMain: TFrmMain;
-  aPlots: Array[TPlotsType] of real = (108.9, 224.2, 461.5);
+  // aPlots: Array[TPlotsType] of real = (101.39, 208.9, 429.8); // GiB
+  // aPlots: Array[TPlotsType] of real = (108.9, 224.2, 461.5); // GB
+  aPlots: Array[TPlotsType] of Int64 = (108900000000, 224200000000, 461500000000); // GB
   аPlotsStr: Array[TPlotsType] of String = ('K32','K33','K34');
   aPlotsMaxCount: Array[TPlotsType] of DWORD;
-  SELECT_DISK_FREE_SZ: UInt64;
 
 const
   CAPTION_MB = 'Chia Plotter Calculator';
@@ -87,29 +88,34 @@ begin
   ScanDrive;
   Constraints.MinHeight := 480;
   Constraints.MinWidth  := 640;
+  Caption := Caption + ' v.' + GetVertionInfo(Application.ExeName, true);
 end;
 
 procedure TFrmMain.sBtnCalculateClick(Sender: TObject);
 var
   N32, N33, N34: integer;
-  Sum: Real;      // Summa
-  Rem: Real;      // Remainder
-  SmallRem: real; // Small Remainder
+  Sum: Extended;      // Summa
+  Rem: Extended;      // Remainder
+  SmallRem: Extended; // Small Remainder
   LastDescription : string;
   DescriptStr     : String;
+  DiskSpace       : Int64;
 begin
 
-  if SpEdDiskSpace.Value < aPlots[K32] then
+  if SpEdDiskSpace.Value < 101 then
   begin
-    MessageBox(Handle, PChar('Указанный размер не соответсвуе требуемому минимальному размеру диска 209 Gb'),
+    MessageBox(Handle, PChar('Указанный размер не соответсвуе требуемому минимальному размеру диска 109 Gb'),
                PChar(CAPTION_MB), MB_ICONWARNING);
     exit;
   end;
-
   mm.Lines.Clear;
-  aPlotsMaxCount[K32] := Trunc(SpEdDiskSpace.Value / aPlots[K32]);
-  aPlotsMaxCount[K33] := Trunc(SpEdDiskSpace.Value / aPlots[K33]);
-  aPlotsMaxCount[K34] := Trunc(SpEdDiskSpace.Value / aPlots[K34]);
+  DiskSpace := SpEdDiskSpace.Value;
+  // конвертация из GiB байты
+  DiskSpace :=  DiskSpace * 1024 * 1024 * 1024;
+  // Здесь вычисляются максимальное количество плотов
+  aPlotsMaxCount[K32] := DiskSpace div aPlots[K32];
+  aPlotsMaxCount[K33] := DiskSpace div aPlots[K33];
+  aPlotsMaxCount[K34] := DiskSpace div aPlots[K34];
 
   SmallRem := aPlots[K32]; // размер самого малого "плота"
 
@@ -121,16 +127,20 @@ begin
       For N32 := 0 to aPlotsMaxCount[K32] do
       begin
         sum := aPlots[K34] * N34 + aPlots[K33] * N33 + aPlots[K32] * N32;
-        if (sum < SpEdDiskSpace.Value) then
+        // if (sum < SpEdDiskSpace.Value) then
+        if (sum < DiskSpace) then
         begin
-          Rem := SpEdDiskSpace.Value - sum;
+          Rem := DiskSpace - sum;
+          // сново конвертирую в GiB
+          sum := sum / 1024 / 1024 / 1024;
+          rem := rem / 1024 / 1024 / 1024;
           // Что бы показать и другие приближенные значения к миниму, задается диапазоном значений
           if (Rem < sSpEdHigh.Value) and (Rem > sSpEdLow.Value) then
           begin
             DescriptStr := аPlotsStr[K34] + 'x' + IntToStr(N34) +
                            ' + ' + аPlotsStr[K33] + 'x' + IntToStr(N33) +
                            ' + ' + аPlotsStr[K32] + 'x' + IntToStr(N32);
-            DescriptStr := DescriptStr + ' = ' + FloatToStrF(sum, ffFixed, 8, 2) +
+            DescriptStr := DescriptStr + ' = ' + FloatToStrF(sum, ffFixed, 10, 2) +
                            'Gb free Size = ' + FloatToStrF(rem, ffFixed, 8, 2) + 'Gb';
             mm.Lines.Add(DescriptStr);
             if Rem < SmallRem then
@@ -144,7 +154,8 @@ begin
     end;
   end;
   mm.Lines.Add('');
-  mm.Lines.Add('Найден самый оптимальный вариант: ' + LastDescription);
+  mm.Lines.Add('Найден самый оптимальный вариант:');
+  mm.Lines.Add(LastDescription);
 end;
 
 procedure TFrmMain.sBtnUdateDriveListClick(Sender: TObject);
@@ -206,6 +217,7 @@ end;
 procedure TFrmMain.sSpEdLowChange(Sender: TObject);
 begin
   if sSpEdLow.Value >= sSpEdHigh.Value then sSpEdHigh.Value := sSpEdLow.Value + 1;
+  if sSpEdLow.Value < 0 then sSpEdLow.Value := 0;
 end;
 
 end.
