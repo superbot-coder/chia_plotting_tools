@@ -4,8 +4,8 @@ object FrmMain: TFrmMain
   Caption = 
     'Chia Plotter Calculator - '#1050#1072#1083#1100#1082#1091#1083#1103#1090#1086#1088' '#1076#1083#1103' '#1086#1087#1090#1080#1084#1072#1083#1100#1085#1086#1075#1086' '#1088#1072#1079#1084#1077#1097#1077#1085#1080 +
     #1103' '#1087#1083#1086#1090#1086#1074
-  ClientHeight = 433
-  ClientWidth = 807
+  ClientHeight = 539
+  ClientWidth = 887
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -6836,148 +6836,416 @@ object FrmMain: TFrmMain
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
-  DesignSize = (
-    807
-    433)
   PixelsPerInch = 96
   TextHeight = 13
-  object sLabel1: TsLabel
-    Left = 8
-    Top = 16
-    Width = 96
-    Height = 13
-    Caption = #1056#1072#1079#1084#1077#1088' '#1076#1080#1089#1082#1072' (Gb):'
-  end
-  object LblSelectDisk: TsLabel
-    Left = 131
-    Top = 17
-    Width = 75
-    Height = 13
-    Caption = #1042#1099#1073#1088#1072#1090#1100' '#1076#1080#1089#1082':'
-  end
-  object mm: TsMemo
-    Left = 8
-    Top = 72
-    Width = 791
-    Height = 353
-    Anchors = [akLeft, akTop, akRight, akBottom]
-    Font.Charset = RUSSIAN_CHARSET
-    Font.Color = clBlack
-    Font.Height = -13
-    Font.Name = 'Courier New'
-    Font.Style = [fsBold]
-    ParentFont = False
-    ScrollBars = ssVertical
+  object sPageControl: TsPageControl
+    Left = 0
+    Top = 0
+    Width = 887
+    Height = 539
+    ActivePage = sTabSheetPlotter
+    Align = alClient
+    MultiLine = True
     TabOrder = 0
-    BoundLabel.Font.Charset = RUSSIAN_CHARSET
-    BoundLabel.Font.Color = clBlack
-    BoundLabel.Font.Height = -13
-    BoundLabel.Font.Name = 'Courier New'
-    BoundLabel.Font.Style = [fsBold]
-  end
-  object sBtnCalculate: TsButton
-    Left = 480
-    Top = 32
-    Width = 121
-    Height = 25
-    Caption = #1056' '#1040' '#1057' C '#1063' '#1048' '#1058' '#1040' '#1058' '#1068
-    TabOrder = 1
-    OnClick = sBtnCalculateClick
-  end
-  object SpEdDiskSpace: TSpinEdit
-    Left = 8
-    Top = 35
-    Width = 96
-    Height = 22
-    MaxValue = 0
-    MinValue = 0
-    TabOrder = 2
-    Value = 1863
-  end
-  object sCmBoxExSelDisk: TsComboBoxEx
-    Left = 131
-    Top = 36
-    Width = 75
-    Height = 22
-    BoundLabel.ParentFont = False
-    ItemsEx = <>
-    Style = csExDropDownList
-    ItemIndex = -1
-    TabOrder = 3
-    OnSelect = sCmBoxExSelDiskSelect
-    Images = ImageListDrive
-  end
-  object sGrBox: TsGroupBox
-    Left = 245
-    Top = 14
-    Width = 209
-    Height = 50
-    Caption = #1044#1086#1087#1091#1089#1090#1080#1084#1086#1077' '#1089#1074#1086#1073#1086#1076#1085#1086#1077' '#1084#1077#1089#1090#1086' '#1076#1080#1089#1082#1072
-    TabOrder = 4
-    object sLblLow: TsLabel
-      Left = 109
-      Top = 24
-      Width = 18
-      Height = 13
-      Caption = #1044#1086':'
+    object sTabSheetCalculate: TsTabSheet
+      Caption = #1050#1072#1083#1100#1082#1091#1083#1103#1090#1086#1088
+      ExplicitWidth = 919
+      object mm: TsMemo
+        Left = 0
+        Top = 80
+        Width = 879
+        Height = 431
+        Align = alClient
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clBlack
+        Font.Height = -13
+        Font.Name = 'Courier New'
+        Font.Style = [fsBold]
+        ParentFont = False
+        ScrollBars = ssVertical
+        TabOrder = 0
+        BoundLabel.Font.Charset = RUSSIAN_CHARSET
+        BoundLabel.Font.Color = clBlack
+        BoundLabel.Font.Height = -13
+        BoundLabel.Font.Name = 'Courier New'
+        BoundLabel.Font.Style = [fsBold]
+        ExplicitWidth = 919
+      end
+      object sPnlCalculator: TsPanel
+        Left = 0
+        Top = 0
+        Width = 879
+        Height = 80
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 1
+        ExplicitWidth = 919
+        object sLabel1: TsLabel
+          Left = 16
+          Top = 17
+          Width = 96
+          Height = 13
+          Caption = #1056#1072#1079#1084#1077#1088' '#1076#1080#1089#1082#1072' (Gb):'
+        end
+        object LblSelectDisk: TsLabel
+          Left = 139
+          Top = 18
+          Width = 75
+          Height = 13
+          Caption = #1042#1099#1073#1088#1072#1090#1100' '#1076#1080#1089#1082':'
+        end
+        object sBtnCalculate: TsButton
+          Left = 484
+          Top = 34
+          Width = 121
+          Height = 25
+          Caption = #1056' '#1040' '#1057' C '#1063' '#1048' '#1058' '#1040' '#1058' '#1068
+          TabOrder = 0
+          OnClick = sBtnCalculateClick
+        end
+        object sGrBox: TsGroupBox
+          Left = 253
+          Top = 15
+          Width = 209
+          Height = 50
+          Caption = #1044#1086#1087#1091#1089#1090#1080#1084#1086#1077' '#1089#1074#1086#1073#1086#1076#1085#1086#1077' '#1084#1077#1089#1090#1086' '#1076#1080#1089#1082#1072
+          TabOrder = 1
+          object sLblLow: TsLabel
+            Left = 109
+            Top = 24
+            Width = 18
+            Height = 13
+            Caption = #1044#1086':'
+          end
+          object sLblHigh: TsLabel
+            Left = 13
+            Top = 24
+            Width = 18
+            Height = 13
+            Caption = #1054#1090':'
+          end
+          object sLblGb1: TsLabel
+            Left = 84
+            Top = 24
+            Width = 13
+            Height = 13
+            Caption = 'Gb'
+          end
+          object sLblGb2: TsLabel
+            Left = 180
+            Top = 24
+            Width = 13
+            Height = 13
+            Caption = 'Gb'
+          end
+          object sSpEdLow: TsSpinEdit
+            Left = 133
+            Top = 21
+            Width = 43
+            Height = 21
+            TabOrder = 0
+            Text = '1'
+            OnChange = sSpEdLowChange
+            BoundLabel.ParentFont = False
+            MaxValue = 7
+            MinValue = 0
+            Value = 1
+          end
+          object sSpEdHigh: TsSpinEdit
+            Left = 37
+            Top = 21
+            Width = 43
+            Height = 21
+            TabOrder = 1
+            Text = '5'
+            OnChange = sSpEdHighChange
+            BoundLabel.ParentFont = False
+            MaxValue = 110
+            MinValue = 2
+            Value = 5
+          end
+        end
+        object sCmBoxExSelDisk: TsComboBoxEx
+          Left = 139
+          Top = 37
+          Width = 75
+          Height = 22
+          BoundLabel.ParentFont = False
+          ItemsEx = <>
+          Style = csExDropDownList
+          ItemIndex = -1
+          TabOrder = 2
+          OnSelect = sCmBoxExSelDiskSelect
+          Images = ImageListDrive
+        end
+        object sBtnUdateDriveList: TsButton
+          Left = 220
+          Top = 35
+          Width = 25
+          Height = 25
+          ImageIndex = 0
+          Images = ImageListBtn
+          TabOrder = 3
+          OnClick = sBtnUdateDriveListClick
+        end
+        object SpEdDiskSpace: TSpinEdit
+          Left = 16
+          Top = 36
+          Width = 96
+          Height = 22
+          MaxValue = 0
+          MinValue = 0
+          TabOrder = 4
+          Value = 1863
+        end
+      end
     end
-    object sLblHigh: TsLabel
-      Left = 13
-      Top = 24
-      Width = 18
-      Height = 13
-      Caption = #1054#1090':'
+    object sTabSheetPlotter: TsTabSheet
+      Caption = #1055#1083#1086#1090#1090#1077#1088
+      ExplicitWidth = 919
+      object sPnlPlotter: TsPanel
+        Left = 0
+        Top = 0
+        Width = 879
+        Height = 113
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 0
+        object sLblDirTemp: TsLabel
+          Left = 16
+          Top = 17
+          Width = 159
+          Height = 13
+          Caption = #1042#1088#1077#1084#1077#1085#1085#1072#1103' '#1076#1080#1088#1077#1082#1090#1086#1088#1080#1103' (Temp):'
+        end
+        object sLblDirDest: TsLabel
+          Left = 16
+          Top = 63
+          Width = 127
+          Height = 13
+          Caption = #1060#1080#1085#1072#1083#1100#1085#1072#1103' '#1076#1080#1088#1077#1082#1090#1086#1088#1080#1103': '
+        end
+        object sLblWallets: TsLabel
+          Left = 260
+          Top = 17
+          Width = 88
+          Height = 13
+          Caption = #1050'o'#1096#1077#1083#1105#1082' (Key ID)'
+        end
+        object sLblThread: TsLabel
+          Left = 554
+          Top = 17
+          Width = 41
+          Height = 13
+          Caption = #1055#1086#1090#1086#1082#1080':'
+        end
+        object sLblRam: TsLabel
+          Left = 622
+          Top = 17
+          Width = 41
+          Height = 13
+          Caption = #1055#1072#1084#1103#1090#1100':'
+        end
+        object sLblPlotType: TsLabel
+          Left = 399
+          Top = 17
+          Width = 55
+          Height = 13
+          Caption = #1058#1080#1087' '#1087#1083#1086#1090#1072':'
+        end
+        object sLblBackets: TsLabel
+          Left = 710
+          Top = 17
+          Width = 48
+          Height = 13
+          Caption = #1050#1086#1088#1079#1080#1085#1099':'
+        end
+        object sLblCount: TsLabel
+          Left = 472
+          Top = 17
+          Width = 64
+          Height = 13
+          Caption = #1050#1086#1083#1080#1095#1077#1089#1090#1074#1086':'
+        end
+        object sBtnStart: TsButton
+          Left = 410
+          Top = 80
+          Width = 104
+          Height = 25
+          Caption = #1057#1058#1040#1056#1058
+          TabOrder = 0
+          OnClick = sBtnStartClick
+        end
+        object sBtnStop: TsButton
+          Left = 539
+          Top = 80
+          Width = 105
+          Height = 25
+          Caption = #1057#1058#1054#1055
+          TabOrder = 1
+          OnClick = sBtnStopClick
+        end
+        object sDirEditTemp: TsDirectoryEdit
+          Left = 16
+          Top = 36
+          Width = 225
+          Height = 21
+          MaxLength = 255
+          TabOrder = 2
+          Text = ''
+          CheckOnExit = True
+          BoundLabel.ParentFont = False
+          Root = 'rfDesktop'
+        end
+        object sDirEditFinal: TsDirectoryEdit
+          Left = 16
+          Top = 82
+          Width = 225
+          Height = 21
+          MaxLength = 255
+          TabOrder = 3
+          Text = ''
+          CheckOnExit = True
+          BoundLabel.ParentFont = False
+          Root = 'rfDesktop'
+        end
+        object sCmBoxExKeyID: TsComboBoxEx
+          Left = 260
+          Top = 36
+          Width = 123
+          Height = 22
+          BoundLabel.ParentFont = False
+          ItemsEx = <>
+          ItemIndex = -1
+          TabOrder = 4
+          Images = ImageListBtn
+        end
+        object sSpEditCPUThred: TsSpinEdit
+          Left = 554
+          Top = 36
+          Width = 49
+          Height = 21
+          TabOrder = 5
+          Text = '2'
+          BoundLabel.ParentFont = False
+          MaxValue = 128
+          MinValue = 2
+          Value = 2
+        end
+        object sSpEditRam: TsSpinEdit
+          Left = 622
+          Top = 36
+          Width = 72
+          Height = 21
+          TabOrder = 6
+          Text = '3390'
+          BoundLabel.ParentFont = False
+          MaxValue = 0
+          MinValue = 3390
+          Value = 3390
+        end
+        object sChBoxBitField: TsCheckBox
+          Left = 772
+          Top = 38
+          Width = 96
+          Height = 17
+          Caption = #1041#1080#1090#1086#1074#1086#1077' '#1087#1086#1083#1077
+          TabOrder = 7
+        end
+        object sBtnCreateBatFile: TsButton
+          Left = 260
+          Top = 80
+          Width = 123
+          Height = 25
+          Caption = #1057#1086#1079#1076#1072#1090#1100' .BAT '#1092#1072#1081#1083' '
+          TabOrder = 8
+          OnClick = sBtnCreateBatFileClick
+        end
+        object sCmBoxPlotsType: TsComboBox
+          Left = 399
+          Top = 36
+          Width = 55
+          Height = 21
+          BoundLabel.ParentFont = False
+          ItemIndex = -1
+          TabOrder = 9
+          OnSelect = sCmBoxPlotsTypeSelect
+        end
+        object sSpEditBackets: TsSpinEdit
+          Left = 710
+          Top = 36
+          Width = 48
+          Height = 21
+          TabOrder = 10
+          Text = '128'
+          BoundLabel.ParentFont = False
+          MaxValue = 128
+          MinValue = 16
+          Value = 128
+        end
+        object sBtnSave: TsButton
+          Left = 667
+          Top = 79
+          Width = 169
+          Height = 27
+          Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1082#1086#1085#1092#1080#1075#1091#1088#1072#1094#1080#1102
+          TabOrder = 11
+          OnClick = sBtnSaveClick
+        end
+        object sSpEditCount: TsSpinEdit
+          Left = 472
+          Top = 36
+          Width = 64
+          Height = 21
+          TabOrder = 12
+          Text = '1'
+          BoundLabel.ParentFont = False
+          MaxValue = 1000
+          MinValue = 1
+          Value = 1
+        end
+        object sRdBtnStile1: TsRadioButton
+          Left = 53
+          Top = 112
+          Width = 89
+          Height = 17
+          Caption = #1042#1080#1076': '#1057#1090#1080#1083#1100' 1'
+          Checked = True
+          TabOrder = 13
+          TabStop = True
+          Visible = False
+          OnClick = sRdBtnStile1Click
+        end
+        object sRdBtnStile2: TsRadioButton
+          Left = 148
+          Top = 112
+          Width = 89
+          Height = 17
+          Caption = #1042#1080#1076': '#1057#1090#1080#1083#1100' 2'
+          TabOrder = 14
+          Visible = False
+          OnClick = sRdBtnStile2Click
+        end
+      end
+      object mmCnsl: TsMemo
+        Left = 0
+        Top = 113
+        Width = 879
+        Height = 398
+        Align = alClient
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clBlack
+        Font.Height = -13
+        Font.Name = 'Courier New'
+        Font.Style = [fsBold]
+        ParentFont = False
+        ScrollBars = ssVertical
+        TabOrder = 1
+        BoundLabel.ParentFont = False
+        ExplicitTop = 136
+        ExplicitHeight = 375
+      end
     end
-    object sLblGb1: TsLabel
-      Left = 84
-      Top = 24
-      Width = 13
-      Height = 13
-      Caption = 'Gb'
-    end
-    object sLblGb2: TsLabel
-      Left = 180
-      Top = 24
-      Width = 13
-      Height = 13
-      Caption = 'Gb'
-    end
-    object sSpEdLow: TsSpinEdit
-      Left = 133
-      Top = 21
-      Width = 43
-      Height = 21
-      TabOrder = 0
-      Text = '1'
-      OnChange = sSpEdLowChange
-      BoundLabel.ParentFont = False
-      MaxValue = 7
-      MinValue = 0
-      Value = 1
-    end
-    object sSpEdHigh: TsSpinEdit
-      Left = 37
-      Top = 21
-      Width = 43
-      Height = 21
-      TabOrder = 1
-      Text = '5'
-      OnChange = sSpEdHighChange
-      BoundLabel.ParentFont = False
-      MaxValue = 110
-      MinValue = 2
-      Value = 5
-    end
-  end
-  object sBtnUdateDriveList: TsButton
-    Left = 212
-    Top = 34
-    Width = 25
-    Height = 25
-    ImageIndex = 0
-    Images = ImageListBtn
-    TabOrder = 5
-    OnClick = sBtnUdateDriveListClick
   end
   object sSkinManager: TsSkinManager
     Effects.AllowAnimation = False
@@ -13975,7 +14243,7 @@ object FrmMain: TFrmMain
     Left = 584
     Top = 224
     Bitmap = {
-      494C010101000800040010001000FFFFFF002110FFFFFFFFFFFFFFFF424D3600
+      494C010102000800040010001000FFFFFF002110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000002222222306060607000000000000
       00001A1A1A1B6D6062749C6972B3AC5A70CFAB5876CF9C657CB46E5F66751B1B
@@ -14003,81 +14271,81 @@ object FrmMain: TFrmMain
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000B36549D6C14020FCC33823FFBF3A
       32FBB55355E1655B5B6A1111111200000000000000000F0F0F1061575C66B436
-      7BEBB91A7BFBB80F84FF5D545B62000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      7BEBB91A7BFBB80F84FF5D545B6200000000EFF7ECFFECF5E8FF000000000000
+      00000000000095C982FF68B34DFF57AB39FF5DAD3FFFA0CF8EFFE5F2E0FF0000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000B2674DD3C24122FBBE4634F4C03B
       33FAA3696ABD0000000000000000020202030101010200000000000000003231
-      3133B43284EBB71C86F8B03490E50B0B0B0C0000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      3133B43284EBB71C86F8B03490E50B0B0B0C000000009ECE8DFF9FCE8EFF0000
+      0000BFDFB4FF4FA62FFF57AA38FF5AAC3CFF59AC3BFF4EA62EFF58AB3AFF0000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000BA5B3BE4C33D1BFFC33924FFC136
       2BFFC03135FFA7656BC506060607000000010000000000000000060606070000
-      00006459606AB81082FFB80A8EFF6458626A0000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      00006459606AB81082FFB80A8EFF6458626A00000000000000000000000082BF
+      69FF4CA52CFF5DAD3FFF5BAC3DFF5AAC3CFF5AAC3CFF5AAC3CFF5BAC3DFF4CA5
+      2CFFAAD49AFF0000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000007566617D9A7065AE986F68AB986E
       6BAC986D6EAC8C6C709B06060607000000000000000000000000000000000101
-      01020B0B0B0C8E6481A1975F8AB05F555D640000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      01020B0B0B0C8E6481A1975F8AB05F555D64000000000000000000000000F2F9
+      F0FFCFE6C6FF4BA42AFF56AA38FF5BAC3DFF5AAC3CFF5AAC3CFF5AAC3CFF5CAD
+      3EFF51A832FF0000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000010101020101
-      0102000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      0102000000000000000000000000000000000000000000000000000000004DA5
+      2CFF4EA62EFFAFD6A0FFCCE5C3FF71B858FF57AB39FF59AC3BFF5AAC3CFF5AAC
+      3CFF5DAE40FF92C77CFF00000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000010101020101010200000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000000000000000000057AB
+      39FF5EAE40FF4CA52BFF5AAC3CFF9ACC88FF8EC577FF5DAD3FFF5AAC3CFF5AAC
+      3CFF5AAC3CFF52A833FFCDE5C3FF000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000006A5F5B709C7065B0916F69A10B0B
       0B0C0101010200000000000000000000000000000000070707088B67799B9764
-      81AC966483AC956385AB966089AE745F707D0000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      81AC966483AC956385AB966089AE745F707D000000000000000000000000BDDE
+      B1FF4EA62DFF5AAC3CFF5AAC3CFF5CAD3EFF59AB3BFF59AB3AFF5AAC3CFF5AAC
+      3CFF5AAC3CFF5DAD3FFF4EA62EFF000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000007767617FC33E1AFFC33825FF655B
       5A6A000000000606060700000000000000000000000106060607A55A7FC5BB17
       70FFB9127AFFB91084FFB80B8CFFB03397E40000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      00008BC474FF5EAE41FF5AAC3CFF5AAC3CFF5AAC3CFF5AAC3CFF5AAC3CFF5AAC
+      3CFF5AAC3CFF5CAD3EFF57AA38FFF7FBF5FF0000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000000000000000000000000000015151516BC4F34EEBF422DF8BB4B
       45EC313030320000000000000000010101020202020300000000000000009F5F
       84BBB81C7CFAB62587F3B7138EFBA94696D30000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000A4D194FF58AB3AFF52A832FF55A936FF57AB39FF57AA38FF52A8
+      32FF4FA62EFF5EAE41FF7DBE65FFE2F0DDFF0000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000000000006C605D72C33A22FFBF3B
       33FAB84A4DEB615758650F0F0F1000000000000000000E0E0E0F5E555A63B043
       82DEB91A7BFBB91083FFB7108DFCAB4397D60000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000E5F2E0FF86C16EFF70B756FF65B149FF67B34CFF83C0
+      6AFFA2D091FFEBF5E8FF00000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -14107,11 +14375,31 @@ object FrmMain: TFrmMain
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000424D3E000000000000003E000000
       2800000040000000100000000100010000000000800000000000000000000000
-      000000000000000000000000FFFFFF0000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000FFFFFF000000FFFF000000000000FFFF00000000
+      0000FFFF000000000000381F000000000000901F000000000000E00700000000
+      0000E007000000000000E003000000000000E001000000000000E00100000000
+      0000F000000000000000F800000000000000FC03000000000000FFFF00000000
+      0000FFFF000000000000FFFF0000000000000000000000000000000000000000
       000000000000}
+  end
+  object DosCmd: TDosCommand
+    InputToOutput = False
+    MaxTimeAfterBeginning = 0
+    MaxTimeAfterLastOutput = 0
+    OnNewLine = DosCmdNewLine
+    OnTerminated = DosCmdTerminated
+    Left = 676
+    Top = 232
+  end
+  object sSaveDlg: TsSaveDialog
+    FileName = 'NewPlotting'
+    Filter = 'Bat file *.bat|*.bat|Cmd file *.cmd|*.cmd'
+    Left = 500
+    Top = 280
+  end
+  object ADOStoredProc1: TADOStoredProc
+    Parameters = <>
+    Left = 236
+    Top = 216
   end
 end

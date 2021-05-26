@@ -3,30 +3,66 @@
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
+  System.IniFiles, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, sButton, sMemo,
   sSkinManager, sLabel, sEdit, Vcl.ComCtrls, sComboBoxes, Vcl.Samples.Spin,
-  Winapi.ShellApi, System.ImageList, Vcl.ImgList, sSpinEdit, sGroupBox, GetVer;
+  Winapi.ShellApi, System.ImageList, Vcl.ImgList, sSpinEdit, sGroupBox, GetVer,
+  Vcl.ExtCtrls, sPanel, sPageControl, Vcl.Mask, sMaskEdit, sCustomComboEdit,
+  sToolEdit, sCheckBox, DosCommand, StrUtils, sDialogs, sComboBox, sRadioButton,
+  Data.DB, Data.Win.ADODB;
 
 type
   TFrmMain = class(TForm)
     sSkinManager: TsSkinManager;
-    mm: TsMemo;
-    sBtnCalculate: TsButton;
-    sLabel1: TsLabel;
-    SpEdDiskSpace: TSpinEdit;
-    sCmBoxExSelDisk: TsComboBoxEx;
-    LblSelectDisk: TsLabel;
     ImageListDrive: TImageList;
+    ImageListBtn: TImageList;
+    sPageControl: TsPageControl;
+    sTabSheetCalculate: TsTabSheet;
+    sTabSheetPlotter: TsTabSheet;
+    mm: TsMemo;
+    sPnlCalculator: TsPanel;
+    sLabel1: TsLabel;
+    LblSelectDisk: TsLabel;
+    sBtnCalculate: TsButton;
     sGrBox: TsGroupBox;
-    sSpEdLow: TsSpinEdit;
     sLblLow: TsLabel;
     sLblHigh: TsLabel;
-    sSpEdHigh: TsSpinEdit;
-    sBtnUdateDriveList: TsButton;
-    ImageListBtn: TImageList;
     sLblGb1: TsLabel;
     sLblGb2: TsLabel;
+    sSpEdLow: TsSpinEdit;
+    sSpEdHigh: TsSpinEdit;
+    sCmBoxExSelDisk: TsComboBoxEx;
+    sBtnUdateDriveList: TsButton;
+    SpEdDiskSpace: TSpinEdit;
+    sPnlPlotter: TsPanel;
+    sBtnStart: TsButton;
+    sBtnStop: TsButton;
+    sDirEditTemp: TsDirectoryEdit;
+    sDirEditFinal: TsDirectoryEdit;
+    sLblDirTemp: TsLabel;
+    sLblDirDest: TsLabel;
+    sCmBoxExKeyID: TsComboBoxEx;
+    sLblWallets: TsLabel;
+    sSpEditCPUThred: TsSpinEdit;
+    sLblThread: TsLabel;
+    mmCnsl: TsMemo;
+    sSpEditRam: TsSpinEdit;
+    sLblRam: TsLabel;
+    sChBoxBitField: TsCheckBox;
+    DosCmd: TDosCommand;
+    sBtnCreateBatFile: TsButton;
+    sSaveDlg: TsSaveDialog;
+    sCmBoxPlotsType: TsComboBox;
+    sLblPlotType: TsLabel;
+    sSpEditBackets: TsSpinEdit;
+    sLblBackets: TsLabel;
+    sBtnSave: TsButton;
+    sLblCount: TsLabel;
+    sSpEditCount: TsSpinEdit;
+    sRdBtnStile1: TsRadioButton;
+    sRdBtnStile2: TsRadioButton;
+    ADOStoredProc1: TADOStoredProc;
     procedure sBtnCalculateClick(Sender: TObject);
     procedure ScanDrive;
     function AddAssociatedIcon(FileName: String; ImageList: TImageList): Integer;
@@ -35,6 +71,22 @@ type
     procedure sSpEdLowChange(Sender: TObject);
     procedure sSpEdHighChange(Sender: TObject);
     procedure sBtnUdateDriveListClick(Sender: TObject);
+    function GetPlotter: String;
+    procedure GetWalletsKeyID;
+    procedure sBtnStartClick(Sender: TObject);
+    procedure sBtnCreateBatFileClick(Sender: TObject);
+    procedure SeveConfigPlotter;
+    procedure LoadConfigPloter;
+    procedure sBtnSaveClick(Sender: TObject);
+    function CheckParametrs: Boolean;
+    procedure DosCmdTerminated(Sender: TObject);
+    procedure DosCmdNewLine(ASender: TObject; const ANewLine: string;
+      AOutputType: TOutputType);
+    procedure sBtnStopClick(Sender: TObject);
+    procedure sRdBtnStile2Click(Sender: TObject);
+    procedure sRdBtnStile1Click(Sender: TObject);
+    procedure sCmBoxPlotsTypeSelect(Sender: TObject);
+    procedure SetingsView;
   private
     { Private declarations }
   public
@@ -45,14 +97,23 @@ type TPlotsType = (K32, K33, K34);
 
 var
   FrmMain: TFrmMain;
-  // aPlots: Array[TPlotsType] of real = (101.39, 208.9, 429.8); // GiB
   // aPlots: Array[TPlotsType] of real = (108.9, 224.2, 461.5); // GB
   aPlots: Array[TPlotsType] of Int64 = (108900000000, 224200000000, 461500000000); // GB
   аPlotsStr: Array[TPlotsType] of String = ('K32','K33','K34');
   aPlotsMaxCount: Array[TPlotsType] of DWORD;
+  aDefaultRamSz: Array[TPlotsType] of DWORD = (3390, 7400, 14800);
+  APPDATA      : String; //
+  LOCALAPPDATA : String; //
+  USERPROFILE  : String; //
+  PLOTTER      : String; // Full path to file plottr
+  ConfigDir    : String; // Configuration saving directory
+  CurrentPath  : String; // Current Directory the procramm
+  DEBUGS       : Boolean;
+  STRAT_DOSCOMMAND: Boolean;
 
 const
   CAPTION_MB = 'Chia Plotter Calculator';
+  ConfigFile = 'Config.ini'; // Name File to configuration save
 
 implementation
 
@@ -83,12 +144,171 @@ begin
   end;
 end;
 
-procedure TFrmMain.FormCreate(Sender: TObject);
+function TFrmMain.CheckParametrs: Boolean;
 begin
+  Result := false;
+
+  if sDirEditTemp.Text = '' then
+  begin
+    MessageBox(Handle, PChar('Не указана временая директрия.'),
+               PChar(CAPTION_MB), MB_ICONWARNING);
+    exit;
+  end;
+
+  if sDirEditFinal.Text = '' then
+  begin
+    MessageBox(Handle, PChar('Не указана финальная директория.'),
+               PChar(CAPTION_MB), MB_ICONWARNING);
+    exit;
+  end;
+
+  if sCmBoxExKeyID.ItemIndex = -1 then
+  begin
+    MessageBox(Handle, PChar('На вашем компьютере обнаружено более 1 кошелька Chia' + #13#10
+               + 'Вы должны выбрать кошелёк для которого будут создавать плоты.'),
+              PChar(CAPTION_MB), MB_ICONWARNING);
+    Exit;
+  end;
+
+  Result := true;
+end;
+
+procedure TFrmMain.DosCmdNewLine(ASender: TObject; const ANewLine: string;
+  AOutputType: TOutputType);
+var
+  AnsiLine: Ansistring;
+begin
+  if AOutputType = otEntireLine then
+  begin
+    if ANewLine <> '' then
+    begin
+      SetLength(AnsiLine, Length(ANewLine));
+      try
+        OemToAnsi(PAnsiChar(AnsiString(ANewLine)), PAnsiChar(AnsiLine));
+      except
+        // hide exception
+        // Иногда возникают исключения, когда попадаются какие то не печатные символы
+        // как то, Например  '' - отсутсвие символа.
+      end;
+    end
+    else
+     AnsiLine := ANewLine;
+
+    mmCnsl.Lines.Add(AnsiLine);
+  end;
+end;
+
+procedure TFrmMain.DosCmdTerminated(Sender: TObject);
+begin
+  sBtnStart.Enabled := True;
+  mmCnsl.Lines.Add('[PROCCESS STOPED]');
+  DosCmd.EndStatus;
+end;
+
+procedure TFrmMain.FormCreate(Sender: TObject);
+var i: ShortInt;
+begin
+  APPDATA      := GetEnvironmentVariable('APPDATA');
+  LOCALAPPDATA := GetEnvironmentVariable('LOCALAPPDATA');
+  USERPROFILE  := GetEnvironmentVariable('USERPROFILE');
+  PLOTTER      := GetPlotter;
+  CurrentPath  := ExtractFilePath(Application.ExeName);
+  //ConfigDir    := IncludeTrailingPathDelimiter(APPDATA) + CAPTION_MB;
+  GetWalletsKeyID;
   ScanDrive;
+  LoadConfigPloter;
+  if sCmBoxExKeyID.Items.Count = 1 then sCmBoxExKeyID.ItemIndex := 0;
+  for i:= 0 to Length(аPlotsStr) -1 do sCmBoxPlotsType.Items.Add(аPlotsStr[TPlotsType(i)]);
+  sCmBoxPlotsType.ItemIndex := 0;
   Constraints.MinHeight := 480;
-  Constraints.MinWidth  := 640;
+  Constraints.MinWidth  := FrmMain.Width;
   Caption := Caption + ' v.' + GetVertionInfo(Application.ExeName, true);
+  SetingsView;
+end;
+
+function TFrmMain.GetPlotter: String;
+var
+  SR: TSearchRec;
+  SourcePath: String;
+begin
+  SourcePath := IncludeTrailingPathDelimiter(LOCALAPPDATA) + 'chia-blockchain\';
+  // Find directory
+  if FindFirst(SourcePath + '*.*', faAnyFile, SR) = 0 then
+  Repeat
+    if (SR.Name = '.') or (SR.Name = '..') then Continue;
+    if (SR.Attr and faDirectory) <> 0 then
+      if AnsiContainsStr(AnsiLowerCase(SR.Name), 'app-') then
+      begin
+        Result := SourcePath + SR.Name + '\resources\app.asar.unpacked\daemon\chia.exe';
+        Break;
+      end;
+  until (FindNext(SR) <> 0);
+  FindClose(SR);
+end;
+
+procedure TFrmMain.GetWalletsKeyID;
+var
+  SR: TSearchRec;
+  SourcePath: String;
+  FileMask : String;
+  s_temp: String;
+begin
+
+  FileMask := 'blockchain_wallet_v1_mainnet_';
+
+  SourcePath := IncludeTrailingPathDelimiter(USERPROFILE) + '.chia\mainnet\wallet\db\';
+
+  // ******************** Find file *****************************
+  if FindFirst(SourcePath + '*.*', faAnyFile, SR) = 0 then
+  Repeat
+    if ((SR.Attr and faDirectory) <> 0) or (SR.Name = '.') or (SR.Name = '..') then Continue;
+
+    s_temp := AnsiLowerCase(SR.Name);
+    s_temp := StringReplace(s_temp, ExtractFileExt(s_temp), '', []);
+
+    if AnsiContainsStr(s_temp, FileMask) then
+    begin
+      s_temp := StringReplace(s_temp, FileMask, '', []);
+      sCmBoxExKeyID.Items.Add(s_temp);
+      sCmBoxExKeyID.ItemsEx[sCmBoxExKeyID.Items.Count-1].ImageIndex := 1;
+    end;
+
+  until (FindNext(SR) <> 0);
+  FindClose(SR);
+
+end;
+
+procedure TFrmMain.LoadConfigPloter;
+var
+  INI: TIniFile;
+  SECTION: String;
+  s: String;
+  x: Integer;
+begin
+  SECTION := 'PLOTTER';
+
+  // Load from ..\Appdata\roaming\ directory
+  //if Not FileExists(IncludeTrailingPathDelimiter(ConfigDir) + ConfigFile) then Exit;
+  // INI := TIniFile.Create(IncludeTrailingPathDelimiter(ConfigDir) + ConfigFile);
+
+  if Not FileExists(CurrentPath + ConfigFile) then Exit;
+  INI := TIniFile.Create(CurrentPath + ConfigFile);
+  try
+    sDirEditTemp.Text  := INI.ReadString(SECTION, 'TempDir','');
+    sDirEditFinal.Text := INI.ReadString(SECTION, 'FinalDir', '');
+    sCmBoxPlotsType.ItemIndex := INI.ReadInteger(SECTION, 'PlotType', -1);
+    sSpEditBackets.Value   := INI.ReadInteger(SECTION, 'Backets', 128);
+    sSpEditCPUThred.Value  := INI.ReadInteger(SECTION, 'CPUThread', 2);
+    sSpEditRam.Value       := INI.ReadInteger(SECTION, 'SysRam', 3390);
+    sSpEditCount.Value     := INI.ReadInteger(SECTION, 'PlotCount', 1);
+    sChBoxBitField.Checked := INI.ReadBool(SECTION, 'BitField', false);
+    Debugs                 := INI.ReadBool('APPLICATION', 'Debugs', false);
+    x := sCmBoxExKeyID.Items.IndexOf(INI.ReadString(SECTION, 'WalletKeyID', ''));
+    if x <> -1 then sCmBoxExKeyID.ItemIndex := x;
+  finally
+    INI.Free;
+  end;
+
 end;
 
 procedure TFrmMain.sBtnCalculateClick(Sender: TObject);
@@ -158,6 +378,96 @@ begin
   mm.Lines.Add(LastDescription);
 end;
 
+procedure TFrmMain.sBtnCreateBatFileClick(Sender: TObject);
+var
+  ST: TStrings;
+  CmdLine: String;
+  SaveFileName: String;
+begin
+
+  if Not CheckParametrs then Exit;
+  if Not sSaveDlg.Execute then Exit;
+
+  ST := TStringList.Create;
+  try
+    ST.Add('set Plotter=' + PLOTTER);
+    ST.Add('set TempDir=' + sDirEditTemp.Text);
+    ST.Add('set FinalDir=' + sDirEditFinal.Text);
+    CmdLine := CmdLine + '%Plotter% plots create -'
+               + AnsiLowerCase(sCmBoxPlotsType.Items[sCmBoxPlotsType.ItemIndex])
+               + ' -n ' + sSpEditCount.Text
+               + ' -t %TempDir%'
+               + ' -d %FinalDir%'
+               + ' -b ' + sSpEditRam.Text
+               + ' -r ' + sSpEditCPUThred.Text
+               + ' -u ' + sSpEditBackets.Text
+               + ' -a ' + sCmBoxExKeyID.Items[sCmBoxExKeyID.ItemIndex];
+    if sChBoxBitField.Checked then CmdLine := CmdLine + ' -e';
+    ST.Add(CmdLine);
+    if ExtractFileExt(sSaveDlg.FileName) = '' then
+    begin
+      Case sSaveDlg.FilterIndex of
+       1: SaveFileName := sSaveDlg.FileName + '.bat';
+       2: SaveFileName := sSaveDlg.FileName + '.cmd';
+      End;
+    end;
+    St.SaveToFile(SaveFileName);
+
+  finally
+    ST.Free;
+  end;
+end;
+
+procedure TFrmMain.sBtnSaveClick(Sender: TObject);
+begin
+  SeveConfigPlotter;
+  ShowMessage('OK');
+end;
+
+procedure TFrmMain.sBtnStartClick(Sender: TObject);
+begin
+  if Not CheckParametrs then Exit;
+
+  DosCmd.CommandLine := DosCmd.CommandLine + Plotter + ' plots create'
+             + ' -' + AnsiLowerCase(sCmBoxPlotsType.Items[sCmBoxPlotsType.ItemIndex])
+             + ' -n ' + sSpEditCount.Text
+             + ' -t ' + sDirEditTemp.Text
+             + ' -d ' + sDirEditFinal.Text
+             + ' -b ' + sSpEditRam.Text
+             + ' -r ' + sSpEditCPUThred.Text
+             + ' -u ' + sSpEditBackets.Text
+             + ' -a ' + sCmBoxExKeyID.Items[sCmBoxExKeyID.ItemIndex];
+
+  if sChBoxBitField.Checked then DosCmd.CommandLine := DosCmd.CommandLine + ' -e';
+  DosCmd.CurrentDir := ExtractFilePath(Plotter);
+
+  mmCnsl.Clear;
+  mmCnsl.Lines.Add('[PROCCESS START]');
+  mmCnsl.Lines.Add('CommandLine: ' + DosCmd.CommandLine);
+  DosCmd.Execute;
+
+  if DosCmd.IsRunning then sBtnStart.Enabled := false;
+
+end;
+
+procedure TFrmMain.sBtnStopClick(Sender: TObject);
+begin
+
+  if Not DosCmd.IsRunning Then Exit;
+  if MessageBox(Handle, PChar('Вы собираетесь прервать процесс создания плота.' + #13#10
+                              + 'Для завершения нажмите "ДА"' + #13#10
+                              + 'Что бы продожить работу нажмите "Нет"'),
+                PChar(CAPTION_MB), MB_ICONWARNING or MB_YESNOCANCEL) <> ID_YES
+  then Exit;
+
+  try
+    DosCmd.Stop;
+  Except
+    // Hide Exceptions
+  end;
+
+end;
+
 procedure TFrmMain.sBtnUdateDriveListClick(Sender: TObject);
 begin
   ScanDrive;
@@ -207,6 +517,73 @@ var  Free_Bytes, TotalSize, FreeSize: Int64;
 begin
   GetDiskFreeSpaceEx(PChar(sCmBoxExSelDisk.Text), Free_Bytes, TotalSize, @FreeSize);
   SpEdDiskSpace.Value := (FreeSize div 1024 div 1024 div 1024);
+end;
+
+procedure TFrmMain.sCmBoxPlotsTypeSelect(Sender: TObject);
+begin
+  if sCmBoxPlotsType.ItemIndex = -1 then exit;
+  sSpEditRam.Value := aDefaultRamSz[TPlotsType(sCmBoxPlotsType.ItemIndex)];
+end;
+
+procedure TFrmMain.SetingsView;
+begin
+  if Not DEBUGS then Exit;
+  with mm.Lines do
+  begin
+    add('APPDATA = ' + APPDATA);           // := GetEnvironmentVariable('APPDATA');
+    add('LOCALAPPDATA = ' + LOCALAPPDATA); // := GetEnvironmentVariable('LOCALAPPDATA');
+    add('USERPROFILE = ' + USERPROFILE);   // := GetEnvironmentVariable('USERPROFILE');
+    add('PLOTTER = ' + PLOTTER);           // := GetPlotter;
+    add('CurrentPath = ' + CurrentPath);   // := ExtractFilePath(Application.ExeName);
+  end;
+end;
+
+procedure TFrmMain.SeveConfigPlotter;
+var
+  INI : TINIFile;
+  SECTION: String;
+begin
+  SECTION := 'PLOTTER';
+
+  {
+  //  The save to ..\Appdata\roaming\ directory
+  if Not DirectoryExists(ConfigDir) then ForceDirectories(ConfigDir);
+  if Not DirectoryExists(ConfigDir) then
+  begin
+    MessageBox(Handle, PChar('Неудалось сохранить параметры, '
+               + 'т.к. не удалось создать директорию в профиле пользователя.'),
+               PChar(CAPTION_MB), MB_ICONERROR);
+    Exit;
+  end;
+  INI := TIniFile.Create(IncludeTrailingPathDelimiter(ConfigDir) + ConfigFile);
+  }
+
+  INI := TIniFile.Create(CurrentPath + ConfigFile);
+  try
+    INI.WriteString(SECTION, 'TempDir', sDirEditTemp.Text);
+    INI.WriteString(SECTION, 'FinalDir', sDirEditFinal.Text);
+    INI.WriteString(SECTION, 'WalletKeyID', sCmBoxExKeyID.Text);
+    INI.WriteInteger(SECTION, 'PlotType', sCmBoxPlotsType.ItemIndex);
+    INI.WriteInteger(SECTION, 'PlotCount', sSpEditCount.Value);
+    INI.WriteInteger(SECTION, 'Backets', sSpEditBackets.Value);
+    INI.WriteInteger(SECTION, 'CPUThread', sSpEditCPUThred.Value);
+    INI.WriteInteger(SECTION, 'SysRam', sSpEditRam.Value);
+    INI.WriteBool(SECTION, 'BitField', sChBoxBitField.Checked);
+  finally
+    INI.Free;
+  end;
+end;
+
+procedure TFrmMain.sRdBtnStile1Click(Sender: TObject);
+begin
+  mmCnsl.Color := clWhite;
+  mmCnsl.Font.Color := clBlack;
+end;
+
+procedure TFrmMain.sRdBtnStile2Click(Sender: TObject);
+begin
+  mmCnsl.Color := clBlack;
+  mmCnsl.Font.Color := clSilver;
 end;
 
 procedure TFrmMain.sSpEdHighChange(Sender: TObject);

@@ -1,4 +1,4 @@
-program ChiaPloterCalculator;
+program ChiaPlotterCalculator;
 
 uses
   Vcl.Forms,
