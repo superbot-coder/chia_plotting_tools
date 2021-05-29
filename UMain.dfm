@@ -1,4 +1,4 @@
-object FrmMain: TFrmMain
+﻿object FrmMain: TFrmMain
   Left = 0
   Top = 0
   Caption = 
@@ -6843,13 +6843,12 @@ object FrmMain: TFrmMain
     Top = 0
     Width = 887
     Height = 539
-    ActivePage = sTabSheetPlotter
+    ActivePage = sTabSheetCalculate
     Align = alClient
     MultiLine = True
     TabOrder = 0
     object sTabSheetCalculate: TsTabSheet
       Caption = #1050#1072#1083#1100#1082#1091#1083#1103#1090#1086#1088
-      ExplicitWidth = 919
       object mm: TsMemo
         Left = 0
         Top = 80
@@ -6869,7 +6868,6 @@ object FrmMain: TFrmMain
         BoundLabel.Font.Height = -13
         BoundLabel.Font.Name = 'Courier New'
         BoundLabel.Font.Style = [fsBold]
-        ExplicitWidth = 919
       end
       object sPnlCalculator: TsPanel
         Left = 0
@@ -6879,7 +6877,7 @@ object FrmMain: TFrmMain
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitWidth = 919
+        ExplicitTop = -6
         object sLabel1: TsLabel
           Left = 16
           Top = 17
@@ -6888,14 +6886,21 @@ object FrmMain: TFrmMain
           Caption = #1056#1072#1079#1084#1077#1088' '#1076#1080#1089#1082#1072' (Gb):'
         end
         object LblSelectDisk: TsLabel
-          Left = 139
+          Left = 131
           Top = 18
           Width = 75
           Height = 13
           Caption = #1042#1099#1073#1088#1072#1090#1100' '#1076#1080#1089#1082':'
         end
+        object sLblЕemplate: TsLabel
+          Left = 251
+          Top = 17
+          Width = 77
+          Height = 13
+          Caption = #1064#1072#1073#1083#1086#1085' '#1076#1080#1089#1082#1072':'
+        end
         object sBtnCalculate: TsButton
-          Left = 484
+          Left = 573
           Top = 34
           Width = 121
           Height = 25
@@ -6904,10 +6909,10 @@ object FrmMain: TFrmMain
           OnClick = sBtnCalculateClick
         end
         object sGrBox: TsGroupBox
-          Left = 253
+          Left = 342
           Top = 15
           Width = 209
-          Height = 50
+          Height = 48
           Caption = #1044#1086#1087#1091#1089#1090#1080#1084#1086#1077' '#1089#1074#1086#1073#1086#1076#1085#1086#1077' '#1084#1077#1089#1090#1086' '#1076#1080#1089#1082#1072
           TabOrder = 1
           object sLblLow: TsLabel
@@ -6952,7 +6957,7 @@ object FrmMain: TFrmMain
             Value = 1
           end
           object sSpEdHigh: TsSpinEdit
-            Left = 37
+            Left = 35
             Top = 21
             Width = 43
             Height = 21
@@ -6966,7 +6971,7 @@ object FrmMain: TFrmMain
           end
         end
         object sCmBoxExSelDisk: TsComboBoxEx
-          Left = 139
+          Left = 131
           Top = 37
           Width = 75
           Height = 22
@@ -6979,7 +6984,7 @@ object FrmMain: TFrmMain
           Images = ImageListDrive
         end
         object sBtnUdateDriveList: TsButton
-          Left = 220
+          Left = 212
           Top = 35
           Width = 25
           Height = 25
@@ -6998,11 +7003,82 @@ object FrmMain: TFrmMain
           TabOrder = 4
           Value = 1863
         end
+        object sCmBoxExTemplateDrive: TsComboBoxEx
+          Left = 251
+          Top = 36
+          Width = 77
+          Height = 22
+          BoundLabel.ParentFont = False
+          ItemsEx = <
+            item
+              Caption = '1 TB'
+              ImageIndex = 0
+              SelectedImageIndex = 0
+            end
+            item
+              Caption = '2 TB'
+              ImageIndex = 0
+              SelectedImageIndex = 0
+            end
+            item
+              Caption = '3 TB'
+              ImageIndex = 0
+              SelectedImageIndex = 0
+            end
+            item
+              Caption = '4 TB'
+              ImageIndex = 0
+              SelectedImageIndex = 0
+            end
+            item
+              Caption = '5 TB'
+              ImageIndex = 0
+              SelectedImageIndex = 0
+            end
+            item
+              Caption = '6 TB'
+              ImageIndex = 0
+              SelectedImageIndex = 0
+            end
+            item
+              Caption = '8 TB'
+              ImageIndex = 0
+              SelectedImageIndex = 0
+            end
+            item
+              Caption = '10 TB'
+              ImageIndex = 0
+              SelectedImageIndex = 0
+            end
+            item
+              Caption = '12 TB'
+              ImageIndex = 0
+              SelectedImageIndex = 0
+            end
+            item
+              Caption = '14 TB'
+              ImageIndex = 0
+              SelectedImageIndex = 0
+            end
+            item
+              Caption = '16 TB'
+              ImageIndex = 0
+              SelectedImageIndex = 0
+            end
+            item
+              Caption = '18 TB'
+              ImageIndex = 0
+              SelectedImageIndex = 0
+            end>
+          ItemIndex = -1
+          TabOrder = 5
+          OnSelect = sCmBoxExTemplateDriveSelect
+          Images = ImageListDrive
+        end
       end
     end
     object sTabSheetPlotter: TsTabSheet
       Caption = #1055#1083#1086#1090#1090#1077#1088
-      ExplicitWidth = 919
       object sPnlPlotter: TsPanel
         Left = 0
         Top = 0
@@ -7242,8 +7318,6 @@ object FrmMain: TFrmMain
         ScrollBars = ssVertical
         TabOrder = 1
         BoundLabel.ParentFont = False
-        ExplicitTop = 136
-        ExplicitHeight = 375
       end
     end
   end
@@ -14396,10 +14470,5 @@ object FrmMain: TFrmMain
     Filter = 'Bat file *.bat|*.bat|Cmd file *.cmd|*.cmd'
     Left = 500
     Top = 280
-  end
-  object ADOStoredProc1: TADOStoredProc
-    Parameters = <>
-    Left = 236
-    Top = 216
   end
 end
