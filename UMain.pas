@@ -10,7 +10,9 @@ uses
   Winapi.ShellApi, System.ImageList, Vcl.ImgList, sSpinEdit, sGroupBox, GetVer,
   Vcl.ExtCtrls, sPanel, sPageControl, Vcl.Mask, sMaskEdit, sCustomComboEdit,
   sToolEdit, sCheckBox, DosCommand, StrUtils, sDialogs, sComboBox, sRadioButton,
-  Data.DB, Data.Win.ADODB;
+  Error;
+
+// Type TExitCode = ();
 
 type
   TFrmMain = class(TForm)
@@ -62,7 +64,8 @@ type
     sSpEditCount: TsSpinEdit;
     sRdBtnStile1: TsRadioButton;
     sRdBtnStile2: TsRadioButton;
-    ADOStoredProc1: TADOStoredProc;
+    sCmBoxExTemplateDrive: TsComboBoxEx;
+    sLblЕemplate: TsLabel;
     procedure sBtnCalculateClick(Sender: TObject);
     procedure ScanDrive;
     function AddAssociatedIcon(FileName: String; ImageList: TImageList): Integer;
@@ -87,6 +90,7 @@ type
     procedure sRdBtnStile1Click(Sender: TObject);
     procedure sCmBoxPlotsTypeSelect(Sender: TObject);
     procedure SetingsView;
+    procedure sCmBoxExTemplateDriveSelect(Sender: TObject);
   private
     { Private declarations }
   public
@@ -109,7 +113,9 @@ var
   ConfigDir    : String; // Configuration saving directory
   CurrentPath  : String; // Current Directory the procramm
   DEBUGS       : Boolean;
-  STRAT_DOSCOMMAND: Boolean;
+  ConsolGarbage:  array[0..1] of String = ('[32m', '[0m');
+  aTempLateDrive: array[0..11] of DWORD =
+                 (931, 1863, 2794, 3725, 4657, 5588, 7451, 9313, 11176, 13039, 14901, 16764);
 
 const
   CAPTION_MB = 'Chia Plotter Calculator';
@@ -177,7 +183,10 @@ procedure TFrmMain.DosCmdNewLine(ASender: TObject; const ANewLine: string;
   AOutputType: TOutputType);
 var
   AnsiLine: Ansistring;
+  garbage: string;
+
 begin
+
   if AOutputType = otEntireLine then
   begin
     if ANewLine <> '' then
@@ -185,6 +194,8 @@ begin
       SetLength(AnsiLine, Length(ANewLine));
       try
         OemToAnsi(PAnsiChar(AnsiString(ANewLine)), PAnsiChar(AnsiLine));
+        for garbage in ConsolGarbage do
+          AnsiLine := StringReplace(AnsiLine, garbage, '', [rfReplaceAll, rfIgnoreCase]);
       except
         // hide exception
         // Иногда возникают исключения, когда попадаются какие то не печатные символы
@@ -192,17 +203,19 @@ begin
       end;
     end
     else
-     AnsiLine := ANewLine;
+      AnsiLine := ANewLine;
 
     mmCnsl.Lines.Add(AnsiLine);
   end;
 end;
 
 procedure TFrmMain.DosCmdTerminated(Sender: TObject);
+var
+  err: Cardinal;
 begin
   sBtnStart.Enabled := True;
   mmCnsl.Lines.Add('[PROCCESS STOPED]');
-  DosCmd.EndStatus;
+  mmCnsl.Lines.Add('ExitCode: ' + IntToStr(DosCmd.ExitCode));
 end;
 
 procedure TFrmMain.FormCreate(Sender: TObject);
@@ -296,7 +309,7 @@ begin
   try
     sDirEditTemp.Text  := INI.ReadString(SECTION, 'TempDir','');
     sDirEditFinal.Text := INI.ReadString(SECTION, 'FinalDir', '');
-    sCmBoxPlotsType.ItemIndex := INI.ReadInteger(SECTION, 'PlotType', -1);
+    sCmBoxPlotsType.ItemIndex := INI.ReadInteger(SECTION, 'PlotType', 0);
     sSpEditBackets.Value   := INI.ReadInteger(SECTION, 'Backets', 128);
     sSpEditCPUThred.Value  := INI.ReadInteger(SECTION, 'CPUThread', 2);
     sSpEditRam.Value       := INI.ReadInteger(SECTION, 'SysRam', 3390);
@@ -427,7 +440,7 @@ end;
 procedure TFrmMain.sBtnStartClick(Sender: TObject);
 begin
   if Not CheckParametrs then Exit;
-
+  DosCmd.CommandLine := '';
   DosCmd.CommandLine := DosCmd.CommandLine + Plotter + ' plots create'
              + ' -' + AnsiLowerCase(sCmBoxPlotsType.Items[sCmBoxPlotsType.ItemIndex])
              + ' -n ' + sSpEditCount.Text
@@ -440,14 +453,12 @@ begin
 
   if sChBoxBitField.Checked then DosCmd.CommandLine := DosCmd.CommandLine + ' -e';
   DosCmd.CurrentDir := ExtractFilePath(Plotter);
-
   mmCnsl.Clear;
   mmCnsl.Lines.Add('[PROCCESS START]');
   mmCnsl.Lines.Add('CommandLine: ' + DosCmd.CommandLine);
+  mmCnsl.Lines.Add('');
   DosCmd.Execute;
-
   if DosCmd.IsRunning then sBtnStart.Enabled := false;
-
 end;
 
 procedure TFrmMain.sBtnStopClick(Sender: TObject);
@@ -517,6 +528,12 @@ var  Free_Bytes, TotalSize, FreeSize: Int64;
 begin
   GetDiskFreeSpaceEx(PChar(sCmBoxExSelDisk.Text), Free_Bytes, TotalSize, @FreeSize);
   SpEdDiskSpace.Value := (FreeSize div 1024 div 1024 div 1024);
+end;
+
+procedure TFrmMain.sCmBoxExTemplateDriveSelect(Sender: TObject);
+begin
+  if sCmBoxExTemplateDrive.ItemIndex = -1 then Exit;
+  SpEdDiskSpace.Value := aTempLateDrive[sCmBoxExTemplateDrive.ItemIndex];
 end;
 
 procedure TFrmMain.sCmBoxPlotsTypeSelect(Sender: TObject);
