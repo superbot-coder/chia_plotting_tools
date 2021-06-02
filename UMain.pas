@@ -9,10 +9,7 @@ uses
   sSkinManager, sLabel, sEdit, Vcl.ComCtrls, sComboBoxes, Vcl.Samples.Spin,
   Winapi.ShellApi, System.ImageList, Vcl.ImgList, sSpinEdit, sGroupBox, GetVer,
   Vcl.ExtCtrls, sPanel, sPageControl, Vcl.Mask, sMaskEdit, sCustomComboEdit,
-  sToolEdit, sCheckBox, DosCommand, StrUtils, sDialogs, sComboBox, sRadioButton,
-  Error;
-
-// Type TExitCode = ();
+  sToolEdit, sCheckBox, DosCommand, StrUtils, sDialogs, sComboBox, sRadioButton;
 
 type
   TFrmMain = class(TForm)
@@ -229,10 +226,9 @@ begin
   //ConfigDir    := IncludeTrailingPathDelimiter(APPDATA) + CAPTION_MB;
   GetWalletsKeyID;
   ScanDrive;
-  LoadConfigPloter;
   if sCmBoxExKeyID.Items.Count = 1 then sCmBoxExKeyID.ItemIndex := 0;
   for i:= 0 to Length(аPlotsStr) -1 do sCmBoxPlotsType.Items.Add(аPlotsStr[TPlotsType(i)]);
-  sCmBoxPlotsType.ItemIndex := 0;
+  LoadConfigPloter;
   Constraints.MinHeight := 480;
   Constraints.MinWidth  := FrmMain.Width;
   Caption := Caption + ' v.' + GetVertionInfo(Application.ExeName, true);
@@ -274,9 +270,10 @@ begin
   // ******************** Find file *****************************
   if FindFirst(SourcePath + '*.*', faAnyFile, SR) = 0 then
   Repeat
-    if ((SR.Attr and faDirectory) <> 0) or (SR.Name = '.') or (SR.Name = '..') then Continue;
+    if ((SR.Attr and faDirectory) = faDirectory) or (SR.Name = '.') or (SR.Name = '..') then Continue;
 
     s_temp := AnsiLowerCase(SR.Name);
+    if ExtractFileExt(s_temp) <> '.sqlite' then Continue;
     s_temp := StringReplace(s_temp, ExtractFileExt(s_temp), '', []);
 
     if AnsiContainsStr(s_temp, FileMask) then

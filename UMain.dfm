@@ -6843,7 +6843,7 @@
     Top = 0
     Width = 887
     Height = 539
-    ActivePage = sTabSheetCalculate
+    ActivePage = sTabSheetPlotter
     Align = alClient
     MultiLine = True
     TabOrder = 0
